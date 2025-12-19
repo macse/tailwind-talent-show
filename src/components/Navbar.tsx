@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const navItems = [
-  { label: "", href: "#", highlight: false, isEmpty: true },
   { label: "Portfolio", href: "#portfolio", highlight: false },
   { label: "People", href: "#people", highlight: true, bgClass: "bg-lime" },
   { label: "Programs", href: "#programs", highlight: false },
@@ -20,77 +19,88 @@ export const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="bg-charcoal text-primary-foreground sticky top-0 z-50 shadow-lg"
+      className="bg-charcoal sticky top-0 z-50"
     >
       {/* Desktop Nav */}
-      <div className="hidden md:flex flex-grow divide-x divide-foreground/20 border-b border-foreground/20">
+      <div className="hidden md:flex">
         {/* Logo */}
         <motion.a
           href="#"
-          className="group flex flex-col justify-end flex-grow min-w-0 p-4 lg:p-6 transition-colors duration-300 hover:bg-background h-28"
-          whileHover={{ backgroundColor: "hsl(var(--background))" }}
+          className="group flex items-center justify-center px-8 py-6 border-r-2 border-foreground/20 bg-charcoal hover:bg-lime transition-colors duration-300"
+          whileHover={{ scale: 1.02 }}
         >
-          <div className="flex justify-start items-center">
-            <motion.div
-              className="h-10 w-24 bg-foreground rounded p-2 flex items-center justify-center group-hover:bg-background transition-colors duration-300"
-              whileHover={{ scale: 1.05 }}
-            >
-              <span className="text-background group-hover:text-foreground font-bold text-lg tracking-tight">
-                CURBITS
-              </span>
-            </motion.div>
-          </div>
+          <motion.div className="flex items-center">
+            <span className="text-cream group-hover:text-charcoal font-black text-2xl tracking-tighter uppercase">
+              CURBITS
+            </span>
+          </motion.div>
         </motion.a>
 
+        {/* Spacer */}
+        <div className="flex-grow bg-charcoal border-r-2 border-foreground/20" />
+
+        {/* Nav Items */}
         {navItems.map((item, index) => (
           <motion.a
             key={index}
             href={item.href}
-            className={`group flex flex-col justify-end flex-grow min-w-0 p-4 lg:p-6 transition-all duration-300 h-28 relative overflow-hidden ${
-              item.highlight ? item.bgClass + " text-foreground" : ""
-            } ${item.isEmpty ? "pointer-events-none" : ""}`}
+            className={`relative flex items-center justify-center px-8 py-6 font-bold text-lg uppercase tracking-wide transition-all duration-300 border-r-2 border-foreground/20 overflow-hidden ${
+              item.highlight 
+                ? "bg-lime text-charcoal" 
+                : "bg-charcoal text-charcoal"
+            }`}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
-            whileHover={
-              !item.isEmpty && !item.highlight
-                ? { backgroundColor: item.highlight ? undefined : "hsl(var(--background))" }
-                : undefined
-            }
           >
-            {!item.highlight && !item.isEmpty && (
+            {/* Background fill on hover for non-highlighted items */}
+            {!item.highlight && (
               <motion.div
-                className="absolute inset-0 bg-background"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: hoveredIndex === index ? 1 : 0 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                style={{ originX: 0 }}
+                className="absolute inset-0 bg-coral"
+                initial={{ y: "100%" }}
+                animate={{ y: hoveredIndex === index ? "0%" : "100%" }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               />
             )}
-            <div className="flex justify-between items-center relative z-10">
-              <motion.span
-                className={`text-lg font-bold leading-none truncate ${
-                  hoveredIndex === index && !item.highlight ? "text-foreground" : ""
-                }`}
-                animate={{
-                  y: hoveredIndex === index ? -2 : 0,
-                }}
+            
+            {/* Text */}
+            <motion.span
+              className={`relative z-10 ${
+                item.highlight 
+                  ? "text-charcoal" 
+                  : hoveredIndex === index 
+                    ? "text-cream" 
+                    : "text-cream/70"
+              }`}
+              animate={{
+                y: hoveredIndex === index && !item.highlight ? -2 : 0,
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              {item.label}
+            </motion.span>
+
+            {/* Bauhaus geometric accent on hover */}
+            {!item.highlight && hoveredIndex === index && (
+              <motion.div
+                className="absolute bottom-2 left-1/2 w-2 h-2 bg-cream rounded-full"
+                initial={{ scale: 0, x: "-50%" }}
+                animate={{ scale: 1, x: "-50%" }}
                 transition={{ duration: 0.2 }}
-              >
-                {item.label}
-              </motion.span>
-            </div>
+              />
+            )}
           </motion.a>
         ))}
       </div>
 
       {/* Mobile Nav */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-foreground/20">
-        <span className="font-bold text-xl">CURBITS</span>
+      <div className="md:hidden flex items-center justify-between p-4 border-b-2 border-foreground/20">
+        <span className="font-black text-2xl text-cream tracking-tighter uppercase">CURBITS</span>
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
           whileTap={{ scale: 0.95 }}
+          className="text-cream"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
         </motion.button>
       </div>
 
@@ -102,14 +112,16 @@ export const Navbar = () => {
           opacity: isOpen ? 1 : 0,
         }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden"
+        className="md:hidden overflow-hidden bg-charcoal"
       >
-        {navItems.filter(item => !item.isEmpty).map((item, index) => (
+        {navItems.map((item, index) => (
           <motion.a
             key={index}
             href={item.href}
-            className={`block p-4 border-b border-foreground/20 ${
-              item.highlight ? item.bgClass + " text-foreground" : ""
+            className={`block p-4 border-b-2 border-foreground/20 font-bold uppercase tracking-wide ${
+              item.highlight 
+                ? "bg-lime text-charcoal" 
+                : "bg-charcoal text-cream/70 hover:text-cream hover:bg-coral"
             }`}
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: isOpen ? 0 : -20, opacity: isOpen ? 1 : 0 }}
